@@ -1,0 +1,9 @@
+Building LockCoin
+
+See doc/readme-qt.rst for instructions on building LockCoin QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of LockCoin.
+
+See doc/build-*.txt for instructions on building LockCoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of LockCoin.

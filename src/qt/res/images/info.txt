@@ -1,0 +1,7 @@
+wallet images.
+
+splash: startup images
+wallet: image in the wallet, left bottom ( main screen )
+about: displayed on the info screen, vertical bar
+
+see here: https://github.com/ppcoin/ppcoin/tree/master/src/qt/res/icons
