@@ -1,47 +1,23 @@
 LockCoin (LOCK)
 
-Lockcoin is a new X11 crypto coin, it has many new, original or advanced features. It uses PoW and PoS with true random SuperBlocks. It has both PoW and PoS superblocks, where it is the first coin with PoS super bonus blocks! It also uses the advanced PoW/PoS separation technology so both PoW and PoS are more stable and secure.
-Lockcoin will add anonymous features in main network soon!
+Linux compile instructions
 
-- X11
-- PoW/PoS independent
-- 3 transaction confirmations 
-- 50 minted block confirmations
+daemon:
+cd src/leveldb
+make -f Makefile
+make -f Makefile libmemenv.a
+cd ..
+make -f makefile.unix
 
-PoW
-- 90 sec PoW block time
-- diff retarget each block for PoW
-- Initial payout will be 512 coins per block
-- True randomness, no cheat from someone with big hashpower
-- Superblocks:
-	- Every 3 hours there will be a block with 4X normal payment (initial 2048 coins)
-	- Every day there will be a block with 16X normal payment (initial 8192 coins)
-	- Every 5 days there will be a block with 128X normal payment (initial 65536 coins)
+qt-wallet:
+cd src/leveldb
+make -f Makefile
+make -f Makefile libmemenv.a
+cd ../..
+qmake "USE_UPNP=-" *.pro
+make -f Makefile
 
-- block payout will maintain at 512 coins for 20 block days, then at 256 coins/block for 5 days. After it the PoW will be shutdown.
-
-PoS
-- 20 sec PoS block time
-- diff retarget each block for PoS
-- minimum hold for PoS: 1 day
-- maximum hold for PoS (over which coin-day no longer accumulated): 60 days
-- Variable PoS payout:
-	- 1st year:  100%
-	- 2nd year: 50%
-	- 3rd and subsequent years: 1%
-
-- Super-PoS-Blocks!! Only for the 1st year: 
-	1 chance in 5 million coin-day (about 0.5 - 10 times per day depends on the PoS generation), that a super-PoS-block of 1024 coins on top of your regular PoS will be generated.
-
-- Total PoW coins will be 14.3 millions.
-- Total coins (including PoS) will be about 45,000,000.
-
-- 2.5 million coins will be used for mini-IPO
-
-- Zero premine (except for mini-IPO)
-
-
-Ports: 19390 (connection), 19391 (RPC)
+enjoy!
 
 
 Development process
