@@ -1034,8 +1034,13 @@ int GetPosHeight(const CBlockIndex* pindex)
 int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, const CBlockIndex* pindex)
 {
     int64_t nSubsidy = 1 * COIN;
-    if(nHeight > LAST_POW_BLOCK)    // kill at 20k blocks
+    if(
+        ( nHeight > LAST_POW_BLOCK && nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+         ||
+        ( nHeight >= LAST_POW_BLOCK_2ND_PHASE )){
+
 		return 0;
+    }
 
     if ( nHeight > 0 && nHeight<2500 ){ // hardfork at block 2500
         nSubsidy *= 1500;
@@ -1048,6 +1053,8 @@ int64_t GetProofOfWorkReward(int nHeight, int64_t nFees, const CBlockIndex* pind
     }else if ( nHeight < 20000 ){
         nSubsidy *= 250;
 
+    }else if ( nHeight < LAST_POW_BLOCK_2ND_PHASE ){
+        nSubsidy *= 100;
     }
     return nSubsidy + nFees;
 }
@@ -1069,8 +1076,15 @@ int64_t GetProofOfWorkBonusRewardFactor(CBlockIndex* pindex)
 	if (!pindex->IsProofOfWork())
 	    return 0;
 
-	if(pindex->nHeight < 3 || pindex->nHeight > LAST_POW_BLOCK)	
+    if(pindex->nHeight < 3 ||
+            (
+                ( pindex->nHeight > LAST_POW_BLOCK && pindex->nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+                 ||
+                ( pindex->nHeight >= LAST_POW_BLOCK_2ND_PHASE )
+             )
+        ){
 		return 0;
+    }
 
     uint64_t nBlockHeight = pindex->nHeight;
 
@@ -1102,7 +1116,7 @@ int64_t GetProofOfWorkBonusRewardFactor(CBlockIndex* pindex)
         if ( SEED_DEBUG ) printf(">> cseed = %s, random = %d\n", cseed, random);
         return random>50500 && random<51501?100:0;   // 1 in 102, x100
     }
-	return 0;
+    return 0; // will return always zero on second pow phase
 }
 
 
@@ -2280,7 +2294,14 @@ bool CBlock::AcceptBlock()
     CBlockIndex* pindexPrev = (*mi).second;
     int nHeight = pindexPrev->nHeight+1;
 
-    if (IsProofOfWork() && nHeight > LAST_POW_BLOCK)
+    if (IsProofOfWork() &&
+           (
+              ( nHeight > LAST_POW_BLOCK && nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+                ||
+              ( nHeight >= LAST_POW_BLOCK_2ND_PHASE )
+           )
+
+        )
         return DoS(100, error("AcceptBlock() : reject proof-of-work at height %d", nHeight));
 
     // Check proof-of-work or proof-of-stake
@@ -3025,7 +3046,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CAddress addrFrom;
         uint64_t nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PROTO_VERSION)
+        if (pfrom->nVersion < MIN_PROTO_VERSION_2)
         {
             // Since February 20, 2012, the protocol is initiated at version 209,
             // and earlier versions are no longer supported

@@ -121,7 +121,11 @@ Value getworkex(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(-10, "LockCoin is downloading blocks...");
 
-    if (pindexBest->nHeight > LAST_POW_BLOCK)
+    if (
+         ( pindexBest->nHeight > LAST_POW_BLOCK && pindexBest->nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+          ||
+         ( pindexBest->nHeight >= LAST_POW_BLOCK_2ND_PHASE )
+        )
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
 	typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -255,7 +259,12 @@ Value getwork(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "LockCoin is downloading blocks...");
 
-    if (pindexBest->nHeight > LAST_POW_BLOCK)
+    if (
+            ( pindexBest->nHeight > LAST_POW_BLOCK && pindexBest->nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+             ||
+            ( pindexBest->nHeight >= LAST_POW_BLOCK_2ND_PHASE )
+
+        )
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     typedef map<uint256, pair<CBlock*, CScript> > mapNewBlock_t;
@@ -399,7 +408,12 @@ Value getblocktemplate(const Array& params, bool fHelp)
     if (IsInitialBlockDownload())
         throw JSONRPCError(RPC_CLIENT_IN_INITIAL_DOWNLOAD, "LockCoin is downloading blocks...");
 
-    if (pindexBest->nHeight > LAST_POW_BLOCK)
+    if (
+            ( pindexBest->nHeight > LAST_POW_BLOCK && pindexBest->nHeight < ENTRY_POW_BLOCK_2ND_PHASE )
+             ||
+            ( pindexBest->nHeight >= LAST_POW_BLOCK_2ND_PHASE )
+
+        )
         throw JSONRPCError(RPC_MISC_ERROR, "No more PoW blocks");
 
     static CReserveKey reservekey(pwalletMain);
